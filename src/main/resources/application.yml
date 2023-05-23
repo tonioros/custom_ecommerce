@@ -1,0 +1,18 @@
+server:
+  port: 8762
+amazon:
+  access:
+    key: cuyev
+    secret-key: xsmjy
+  region: us-east-1
+  endpoint:
+    url: http://localhost:8000/
+spring:
+  jpa:
+    defer-datasource-initialization: true
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:${server.port}/auth/realms/baeldung
+          jwk-set-uri: http://localhost:${server.port}/auth/realms/baeldung/protocol/openid-connect/certs
