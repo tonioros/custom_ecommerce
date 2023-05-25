@@ -1,10 +1,13 @@
 package org.antonioxocoy.cecommerce.service;
 
-import org.antonioxocoy.cecommerce.dto.UserDTO;
-import org.antonioxocoy.cecommerce.entity.User;
+import org.antonioxocoy.cecommerce.exception.UserNotFoundException;
+import org.antonioxocoy.cecommerce.models.dto.UserDTO;
+import org.antonioxocoy.cecommerce.models.entity.User;
 import org.antonioxocoy.cecommerce.exception.UserNotValidToRegisterException;
 import org.antonioxocoy.cecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,12 +16,15 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User registerUser(UserDTO userDto) throws UserNotValidToRegisterException {
         Optional<User> res = this.userRepository.findFirstByEmail(userDto.getEmail());
         if (res.isEmpty()) {
             User newUser = User.parse(userDto);
+            newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
             return this.userRepository.save(newUser);
         } else {
             if (res.get().getEmail().equals(userDto.getEmail())) {
@@ -29,8 +35,10 @@ public class UserService {
                 User pastUser = res.get();
                 pastUser.setDeleted(false);
                 User.parseAndJoin(userDto, pastUser);
+                pastUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
                 return this.userRepository.save(pastUser);
             }
         }
     }
+
 }

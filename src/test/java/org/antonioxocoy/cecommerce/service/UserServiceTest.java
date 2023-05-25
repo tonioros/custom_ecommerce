@@ -1,8 +1,8 @@
 package org.antonioxocoy.cecommerce.service;
 
 import org.antonioxocoy.cecommerce.config.LocalDBTesting;
-import org.antonioxocoy.cecommerce.dto.UserDTO;
-import org.antonioxocoy.cecommerce.entity.User;
+import org.antonioxocoy.cecommerce.models.dto.UserDTO;
+import org.antonioxocoy.cecommerce.models.entity.User;
 import org.antonioxocoy.cecommerce.exception.UserNotValidToRegisterException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

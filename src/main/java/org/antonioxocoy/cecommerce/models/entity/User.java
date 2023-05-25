@@ -1,8 +1,8 @@
-package org.antonioxocoy.cecommerce.entity;
+package org.antonioxocoy.cecommerce.models.entity;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.Data;
-import org.antonioxocoy.cecommerce.dto.UserDTO;
+import org.antonioxocoy.cecommerce.models.dto.UserDTO;
 import org.antonioxocoy.cecommerce.util.SecureUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -21,7 +21,6 @@ public class User implements Serializable {
     private String password;
     private Boolean isBlocked;
     private Boolean deleted;
-    private String saltpassword;
     private String type;
 
     public User() {
@@ -80,20 +79,7 @@ public class User implements Serializable {
      * @param password
      */
     public void setPassword(String password) {
-        SecureRandom randomSalt = new SecureRandom();
-        this.setSaltPassword(SecureUtil.generateSafeToken(randomSalt));
-        BCryptPasswordEncoder bCryptPasswordEncoder =
-                new BCryptPasswordEncoder(BCRYPT_STENGETH, randomSalt);
-        this.password = bCryptPasswordEncoder.encode(password);
-    }
-
-    @DynamoDBAttribute(attributeName = "salt_password")
-    public String getSaltPassword() {
-        return this.saltpassword;
-    }
-
-    public void setSaltPassword(String saltpassword) {
-        this.saltpassword = saltpassword;
+       this.password = password;
     }
 
     @DynamoDBAttribute(attributeName = "type")

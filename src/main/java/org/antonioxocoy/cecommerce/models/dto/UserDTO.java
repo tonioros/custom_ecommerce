@@ -1,4 +1,4 @@
-package org.antonioxocoy.cecommerce.dto;
+package org.antonioxocoy.cecommerce.models.dto;
 
 public class UserDTO {
 
