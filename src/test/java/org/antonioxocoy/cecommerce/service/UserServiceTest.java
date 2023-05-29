@@ -25,7 +25,7 @@ public class UserServiceTest extends LocalDBTesting {
 
     @Test
     public void testCanRegisterUser() throws UserNotValidToRegisterException {
-        UserDTO userTemp = new UserDTO("Antonio Xocoy", "anxrosales@gmail.com", "123", "admin");
+        UserDTO userTemp = new UserDTO("Antonio Xocoy", "asdfas@gmail.com", "123", "admin");
         User newUser = this.userService.registerUser(userTemp);
         Assert.assertEquals(userTemp.getEmail(), newUser.getEmail());
         Assert.assertTrue(newUser.getId() != null && !newUser.getId().isEmpty());

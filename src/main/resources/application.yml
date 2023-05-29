@@ -11,3 +11,8 @@ amazon:
 security:
   jwt:
     secret: 9FjialXID-Nhay-OZASgUURSVDbJkDaxGbeGXx6_bzYuv_t4biEhEXld2YkFwbeu
+  encrypt:
+    alg: PBKDF2WithHmacSHA256
+    type: AES/CBC/PKCS5Padding
+    key: 901238955f4ce93b67e18660094ae8bd26d74612804e04e2c56f7c629f7d258b
+    salt: JGec_Uhw36svc7RBv6gLyYUOo6s

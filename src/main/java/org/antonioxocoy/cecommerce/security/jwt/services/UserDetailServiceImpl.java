@@ -1,6 +1,6 @@
-package org.antonioxocoy.cecommerce.jwt.services;
+package org.antonioxocoy.cecommerce.security.jwt.services;
 
-import org.antonioxocoy.cecommerce.jwt.UserDetailsImpl;
+import org.antonioxocoy.cecommerce.security.jwt.UserDetailsImpl;
 import org.antonioxocoy.cecommerce.models.entity.User;
 import org.antonioxocoy.cecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,10 @@
 package org.antonioxocoy.cecommerce.service;
 
-import org.antonioxocoy.cecommerce.exception.UserNotFoundException;
+import org.antonioxocoy.cecommerce.exception.UserNotValidToRegisterException;
 import org.antonioxocoy.cecommerce.models.dto.UserDTO;
 import org.antonioxocoy.cecommerce.models.entity.User;
-import org.antonioxocoy.cecommerce.exception.UserNotValidToRegisterException;
 import org.antonioxocoy.cecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class UserService {
         if (res.isEmpty()) {
             User newUser = User.parse(userDto);
             newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
-            return this.userRepository.save(newUser);
+            return flushUser(this.userRepository.save(newUser));
         } else {
             if (res.get().getEmail().equals(userDto.getEmail())) {
                 throw new UserNotValidToRegisterException("Already exist a user with the email " + userDto.getEmail());
@@ -36,9 +34,16 @@ public class UserService {
                 pastUser.setDeleted(false);
                 User.parseAndJoin(userDto, pastUser);
                 pastUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
-                return this.userRepository.save(pastUser);
+                return flushUser(this.userRepository.save(pastUser));
             }
         }
+    }
+
+    private User flushUser(User user) {
+        user.setPassword(null);
+        user.setDeleted(null);
+        user.setIsBlocked(null);
+        return user;
     }
 
 }

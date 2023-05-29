@@ -1,4 +1,4 @@
-package org.antonioxocoy.cecommerce.jwt;
+package org.antonioxocoy.cecommerce.security.jwt;
 
 import org.antonioxocoy.cecommerce.models.entity.User;
 import org.springframework.security.core.GrantedAuthority;

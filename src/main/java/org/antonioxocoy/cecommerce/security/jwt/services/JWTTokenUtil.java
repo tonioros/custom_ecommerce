@@ -1,17 +1,26 @@
-package org.antonioxocoy.cecommerce.jwt;
+package org.antonioxocoy.cecommerce.security.jwt.services;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.antonioxocoy.cecommerce.models.entity.User;
+import org.antonioxocoy.cecommerce.security.encription.EncryptService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Collections;
 import java.util.Date;
 
@@ -25,11 +34,19 @@ public class JWTTokenUtil {
     @Value("${app-name}")
     private String APP_NAME;
 
-    public String generateAccessToken(User user) {
+    @Autowired
+    private EncryptService es;
+
+    public String generateAccessToken(User user) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
+        String emailEnc = es.encrypt(user.getEmail());
+        String idEnc = es.encrypt(user.getId());
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .setId(user.getId())
+                .setSubject(emailEnc)
+                .setId(idEnc)
                 .setIssuer(APP_NAME)
+                .claim("type", user.getType())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(getKey())
@@ -37,17 +54,17 @@ public class JWTTokenUtil {
     }
 
     private SecretKey getKey() {
-        // return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SCRT_K));
-        SecretKey key = Keys.hmacShaKeyFor(SCRT_K.getBytes());
-        return key;
+        return Keys.hmacShaKeyFor(SCRT_K.getBytes());
     }
 
     public UsernamePasswordAuthenticationToken getEmailFromJwtToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
-            String email = claims.getSubject();
+            String email = es.decrypt(claims.getSubject());
             return new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
-        } catch (JwtException ex) {
+        } catch (JwtException | InvalidAlgorithmParameterException | NoSuchPaddingException |
+                 IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException | InvalidKeySpecException |
+                 InvalidKeyException ex) {
             ex.printStackTrace();
             return null;
         }
